@@ -513,7 +513,7 @@ public class RamlJavaClientGenerator {
     }
 
     private RuleFactory getRuleFactory() {
-        return new RuleFactory(new JsonSchemaGeneratorConfiguration(), new Jackson2Annotator(), new SchemaStore());
+        return new RuleFactory(new JsonSchemaGeneratorConfiguration(), new Jackson1Annotator(), new SchemaStore());
     }
 
     private static class JsonSchemaGeneratorConfiguration extends DefaultGenerationConfig {
