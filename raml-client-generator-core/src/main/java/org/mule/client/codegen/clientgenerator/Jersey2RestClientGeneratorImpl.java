@@ -133,18 +133,26 @@ public class Jersey2RestClientGeneratorImpl implements RestClientGenerator {
 
         final JBlock ifBlock = body._if(responseVal.invoke("getStatusInfo").invoke("getFamily").ne(cm.directClass("javax.ws.rs.core.Response.Status.Family").staticRef("SUCCESSFUL")))._then();
         final JVar statusInfo = ifBlock.decl(cm.ref(Response.StatusType.class), "statusInfo", responseVal.invoke("getStatusInfo"));
-
-        ifBlock._throw(JExpr._new(exceptionClass).arg(statusInfo.invoke("getStatusCode")).arg(statusInfo.invoke("getReasonPhrase")));
-
+        JVar exceptionVariable = ifBlock.decl(exceptionClass, "exception", JExpr._new(exceptionClass).arg(statusInfo.invoke("getStatusCode")).arg(statusInfo.invoke("getReasonPhrase")));
+        final JBlock hasEntityIfBlock = ifBlock._if(responseVal.invoke("hasEntity"))._then();
+        hasEntityIfBlock.invoke(exceptionVariable, "setMessageBody").arg(responseVal.invoke("readEntity").arg(cm.ref(String.class).dotclass()));
+        ifBlock.invoke(responseVal, "close");
+        ifBlock._throw(exceptionVariable);
         if (returnType != cm.VOID) {
             if (returnType.equals(cm.ref(Object.class))) {
-                body._return(responseVal.invoke("getEntity"));
+                final JVar entity = body.decl(returnType, "entity", responseVal.invoke("getEntity"));
+                body.invoke(responseVal, "close");
+                body._return(entity);
             } else {
                 if (returnType instanceof JClass && !((JClass) returnType).getTypeParameters().isEmpty()) {
                     final JClass narrow = cm.anonymousClass(cm.ref(GenericType.class).narrow(returnType));
-                    body._return(responseVal.invoke("readEntity").arg(JExpr._new(narrow)));
+                    final JVar entity = body.decl(returnType, "entity", responseVal.invoke("readEntity").arg(JExpr._new(narrow)));
+                    body.invoke(responseVal, "close");
+                    body._return(entity);
                 } else {
-                    body._return(responseVal.invoke("readEntity").arg(JExpr.dotclass(cm.ref(returnType.fullName()))));
+                    final JVar entity = body.decl(returnType, "entity",responseVal.invoke("readEntity").arg(JExpr.dotclass(cm.ref(returnType.fullName()))));
+                    body.invoke(responseVal, "close");
+                    body._return(entity);
                 }
             }
         }
@@ -175,6 +183,7 @@ public class Jersey2RestClientGeneratorImpl implements RestClientGenerator {
 
             JFieldVar statusCodeField = customExceptionClass.field(JMod.PRIVATE, Integer.TYPE, "statusCode");
             JFieldVar reasonField = customExceptionClass.field(JMod.PRIVATE, String.class, "reason");
+            JFieldVar messageBodyField = customExceptionClass.field(JMod.PRIVATE, String.class, "messageBody");
 
             JMethod containerConstructor = customExceptionClass.constructor(JMod.PUBLIC);
 
@@ -189,6 +198,10 @@ public class Jersey2RestClientGeneratorImpl implements RestClientGenerator {
 
             statusCodeGetterMethod.body()._return(JExpr._this().ref(statusCodeField));
             reasonGetterMethod.body()._return(JExpr._this().ref(reasonField));
+
+            JMethod messageBodySetterMethod = customExceptionClass.method(JMod.PUBLIC, cm.VOID, "setMessageBody");
+            JVar messageBodyParameter = messageBodySetterMethod.param(String.class, "messageBody");
+            messageBodySetterMethod.body().assign(JExpr._this().ref(messageBodyField), messageBodyParameter);
 
             exceptionClass = customExceptionClass;
         } catch (JClassAlreadyExistsException e) {
