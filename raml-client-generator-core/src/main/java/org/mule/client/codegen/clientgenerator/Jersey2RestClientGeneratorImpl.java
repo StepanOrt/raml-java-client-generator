@@ -135,7 +135,7 @@ public class Jersey2RestClientGeneratorImpl implements RestClientGenerator {
         final JVar statusInfo = ifBlock.decl(cm.ref(Response.StatusType.class), "statusInfo", responseVal.invoke("getStatusInfo"));
         JVar exceptionVariable = ifBlock.decl(exceptionClass, "exception", JExpr._new(exceptionClass).arg(statusInfo.invoke("getStatusCode")).arg(statusInfo.invoke("getReasonPhrase")));
         final JBlock hasEntityIfBlock = ifBlock._if(responseVal.invoke("hasEntity"))._then();
-        hasEntityIfBlock.invoke(exceptionVariable, "setMessageBody").arg(responseVal.invoke("readEntity").arg(cm.ref(String.class).dotclass()));
+        hasEntityIfBlock.invoke(exceptionVariable, "setMessageBody").arg(responseVal.invoke("readEntity").arg(JExpr._new(cm.anonymousClass(cm.ref(GenericType.class).narrow(cm.ref(String.class))))));
         ifBlock.invoke(responseVal, "close");
         ifBlock._throw(exceptionVariable);
         if (returnType != cm.VOID) {

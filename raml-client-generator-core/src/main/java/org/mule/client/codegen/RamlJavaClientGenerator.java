@@ -245,10 +245,11 @@ public class RamlJavaClientGenerator {
                             resourceConstructor.body().assign(baseUrlField, baseUrlParam.plus(JExpr.lit("/" + resourceName)));
                             resourceConstructor.body().assign(JExpr._this().ref(clientField), clientParam);
                             //Link with parent as field
-                            final JFieldVar resourceField = parentClass.field(JMod.PUBLIC | JMod.FINAL, resourceClass, NameHelper.toValidFieldName(resourceName));
+                            final JFieldVar resourceField = parentClass.field(JMod.PRIVATE | JMod.FINAL, resourceClass, NameHelper.toValidFieldName(resourceName));
                             if (StringUtils.isNotEmpty(resourceDescription)) {
                                 resourceField.javadoc().add(resourceDescription);
                             }
+                            parentClass.method(JMod.PUBLIC, resourceClass, NameHelper.getGetterName(resourceName)).body()._return(JExpr._this().ref(resourceField));
 
                             parentConstructor.body()
                                     .assign(resourceField, JExpr._new(resourceClass).arg(JExpr.invoke(GET_BASE_URI_METHOD_NAME)).arg(JExpr.invoke(getClientMethod)));
