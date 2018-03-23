@@ -232,7 +232,7 @@ public class RamlJavaClientGenerator {
 
                             //Link with parent as method
                             final String uriParameterName = resourceName.substring(1, resourceName.length() - 1);
-                            final JMethod resourceFactoryMethod = parentClass.method(JMod.PUBLIC | JMod.FINAL, resourceClass, NameHelper.toValidFieldName(uriParameterName));
+                            final JMethod resourceFactoryMethod = parentClass.method(JMod.PUBLIC, resourceClass, NameHelper.toValidFieldName(uriParameterName));
                             if (StringUtils.isNotEmpty(resourceDescription)) {
                                 resourceFactoryMethod.javadoc().add(resourceDescription);
                             }
