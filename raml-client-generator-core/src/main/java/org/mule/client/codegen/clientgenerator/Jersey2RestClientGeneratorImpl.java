@@ -150,7 +150,7 @@ public class Jersey2RestClientGeneratorImpl implements RestClientGenerator {
                     body.invoke(responseVal, "close");
                     body._return(entity);
                 } else {
-                    final JVar entity = body.decl(returnType, "entity",responseVal.invoke("readEntity").arg(JExpr.dotclass(cm.ref(returnType.fullName()))));
+                    final JVar entity = body.decl(returnType, "entity", responseVal.invoke("readEntity").arg(JExpr.dotclass(cm.ref(returnType.fullName()))));
                     body.invoke(responseVal, "close");
                     body._return(entity);
                 }
@@ -202,6 +202,18 @@ public class Jersey2RestClientGeneratorImpl implements RestClientGenerator {
             JMethod messageBodySetterMethod = customExceptionClass.method(JMod.PUBLIC, cm.VOID, "setMessageBody");
             JVar messageBodyParameter = messageBodySetterMethod.param(String.class, "messageBody");
             messageBodySetterMethod.body().assign(JExpr._this().ref(messageBodyField), messageBodyParameter);
+
+
+            JBlock getMessageBody = customExceptionClass.method(JMod.PUBLIC, cm.ref(String.class), "getMessage").body();
+            JVar messageVar = getMessageBody
+                    .decl(cm.ref(String.class), "message", JExpr.lit("Error response received:\nStatus: ")
+                            .plus(JExpr._this().ref(statusCodeField))
+                            .plus(JExpr.lit("\nReason: "))
+                            .plus(JExpr._this().ref(reasonField)));
+            getMessageBody._if(JExpr._this().ref(messageBodyField).ne(JExpr._null()))._then()
+                    .assignPlus(messageVar, JExpr.lit("\nBody:\n").plus(JExpr._this().ref(messageBodyField)));
+            getMessageBody._return(messageVar);
+
 
             exceptionClass = customExceptionClass;
         } catch (JClassAlreadyExistsException e) {
