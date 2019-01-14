@@ -5,6 +5,7 @@ import java.util.List;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status.Family;
@@ -31,7 +32,7 @@ public class Users {
 
     /**
      * Returns the list of all users
-     * 
+     *
      */
     public List<UsersGETResponse> get() {
         WebTarget target = this.client.target(getBaseUri());
@@ -39,13 +40,24 @@ public class Users {
         Response response = invocationBuilder.get();
         if (response.getStatusInfo().getFamily()!= Family.SUCCESSFUL) {
             Response.StatusType statusInfo = response.getStatusInfo();
-            throw new FooException(statusInfo.getStatusCode(), statusInfo.getReasonPhrase());
-        }
-        return response.readEntity(new GenericType<List<UsersGETResponse>>() {
+            FooException exception = new FooException(statusInfo.getStatusCode(), statusInfo.getReasonPhrase());
+            if (response.hasEntity()) {
+                exception.setMessageBody(response.readEntity(new GenericType<String>() {
 
 
+                                                             }
+                ));
+            }
+            response.close();
+            throw exception;
         }
+        List<UsersGETResponse> entity = response.readEntity(new GenericType<List<UsersGETResponse>>() {
+
+
+                                                            }
         );
+        response.close();
+        return entity;
     }
 
 }

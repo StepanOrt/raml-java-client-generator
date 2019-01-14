@@ -4,6 +4,7 @@ package x-www-form-urlencoded.resource.sendFormData;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -42,7 +43,16 @@ public class SendFormData {
         Response response = invocationBuilder.post(Entity.entity(multiValuedMap, javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED_TYPE));
         if (response.getStatusInfo().getFamily()!= Family.SUCCESSFUL) {
             Response.StatusType statusInfo = response.getStatusInfo();
-            throw new TestsendformdataException(statusInfo.getStatusCode(), statusInfo.getReasonPhrase());
+            TestsendformdataException exception = new TestsendformdataException(statusInfo.getStatusCode(), statusInfo.getReasonPhrase());
+            if (response.hasEntity()) {
+                exception.setMessageBody(response.readEntity(new GenericType<String>() {
+
+
+                                                             }
+                ));
+            }
+            response.close();
+            throw exception;
         }
     }
 

@@ -8,7 +8,7 @@ public class Cs {
 
     private String _baseUrl;
     private Client client;
-    public final Login login;
+    private final Login login;
 
     public Cs(String baseUrl, Client client) {
         _baseUrl = (baseUrl +"/cs");
@@ -22,6 +22,10 @@ public class Cs {
 
     private String getBaseUri() {
         return _baseUrl;
+    }
+
+    public Login getLogin() {
+        return this.login;
     }
 
 }

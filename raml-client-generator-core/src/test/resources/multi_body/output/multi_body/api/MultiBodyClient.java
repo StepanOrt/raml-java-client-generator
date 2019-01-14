@@ -8,12 +8,12 @@ import multi_body.resource.cs.Cs;
 
 /**
  * A String
- * 
+ *
  */
 public class MultiBodyClient {
 
     private String _baseUrl;
-    public final Cs cs;
+    private final Cs cs;
 
     public MultiBodyClient(String baseUrl) {
         _baseUrl = baseUrl;
@@ -30,6 +30,10 @@ public class MultiBodyClient {
 
     public static MultiBodyClient create(String baseUrl) {
         return new MultiBodyClient(baseUrl);
+    }
+
+    public Cs getCs() {
+        return this.cs;
     }
 
 }

@@ -28,7 +28,7 @@
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
-            <artifactId>jersey-media-json-jackson</artifactId>
+            <artifactId>jersey-media-json-jackson1</artifactId>
             <version>${jersey.version}</version>
         </dependency>
 

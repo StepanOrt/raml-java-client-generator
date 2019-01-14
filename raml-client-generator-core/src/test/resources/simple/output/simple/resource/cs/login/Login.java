@@ -4,6 +4,7 @@ package simple.resource.cs.login;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import simple.exceptions.FooException;
 import simple.resource.cs.login.model.LoginPOSTBody;
@@ -32,9 +33,20 @@ public class Login {
         Response response = invocationBuilder.post(Entity.json(body));
         if (response.getStatusInfo().getFamily()!= javax.ws.rs.core.Response.Status.Family.SUCCESSFUL) {
             Response.StatusType statusInfo = response.getStatusInfo();
-            throw new FooException(statusInfo.getStatusCode(), statusInfo.getReasonPhrase());
+            FooException exception = new FooException(statusInfo.getStatusCode(), statusInfo.getReasonPhrase());
+            if (response.hasEntity()) {
+                exception.setMessageBody(response.readEntity(new GenericType<String>() {
+
+
+                                                             }
+                ));
+            }
+            response.close();
+            throw exception;
         }
-        return response.readEntity(simple.resource.cs.login.model.LoginPOSTResponse.class);
+        simple.resource.cs.login.model.LoginPOSTResponse entity = response.readEntity(simple.resource.cs.login.model.LoginPOSTResponse.class);
+        response.close();
+        return entity;
     }
 
     public simple.resource.cs.login.model.LoginGETResponse get() {
@@ -43,9 +55,20 @@ public class Login {
         Response response = invocationBuilder.get();
         if (response.getStatusInfo().getFamily()!= javax.ws.rs.core.Response.Status.Family.SUCCESSFUL) {
             Response.StatusType statusInfo = response.getStatusInfo();
-            throw new FooException(statusInfo.getStatusCode(), statusInfo.getReasonPhrase());
+            FooException exception = new FooException(statusInfo.getStatusCode(), statusInfo.getReasonPhrase());
+            if (response.hasEntity()) {
+                exception.setMessageBody(response.readEntity(new GenericType<String>() {
+
+
+                                                             }
+                ));
+            }
+            response.close();
+            throw exception;
         }
-        return response.readEntity(simple.resource.cs.login.model.LoginGETResponse.class);
+        simple.resource.cs.login.model.LoginGETResponse entity = response.readEntity(simple.resource.cs.login.model.LoginGETResponse.class);
+        response.close();
+        return entity;
     }
 
 }

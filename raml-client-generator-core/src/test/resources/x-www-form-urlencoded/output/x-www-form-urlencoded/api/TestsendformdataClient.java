@@ -8,12 +8,12 @@ import x-www-form-urlencoded.resource.sendFormData.SendFormData;
 
 /**
  * Some content
- * 
+ *
  */
 public class TestsendformdataClient {
 
     private String _baseUrl;
-    public final SendFormData sendFormData;
+    private final SendFormData sendFormData;
 
     public TestsendformdataClient(String baseUrl) {
         _baseUrl = baseUrl;
@@ -30,6 +30,10 @@ public class TestsendformdataClient {
 
     public static TestsendformdataClient create(String baseUrl) {
         return new TestsendformdataClient(baseUrl);
+    }
+
+    public SendFormData getSendFormData() {
+        return this.sendFormData;
     }
 
 }

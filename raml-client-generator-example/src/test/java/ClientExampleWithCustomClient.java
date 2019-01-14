@@ -17,7 +17,7 @@ public class ClientExampleWithCustomClient {
                 return client;
             }
         };
-        client.users.userId("luis").get();
+        client.getUsers().userId("luis").get();
 
     }
 }

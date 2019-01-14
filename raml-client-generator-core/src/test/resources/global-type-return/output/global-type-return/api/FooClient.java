@@ -8,12 +8,12 @@ import global-type-return.resource.cs.Cs;
 
 /**
  * A String
- * 
+ *
  */
 public class FooClient {
 
     private String _baseUrl;
-    public final Cs cs;
+    private final Cs cs;
 
     public FooClient(String baseUrl) {
         _baseUrl = baseUrl;
@@ -30,6 +30,10 @@ public class FooClient {
 
     public static FooClient create(String baseUrl) {
         return new FooClient(baseUrl);
+    }
+
+    public Cs getCs() {
+        return this.cs;
     }
 
 }

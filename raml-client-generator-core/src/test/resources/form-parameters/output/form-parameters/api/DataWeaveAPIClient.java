@@ -13,7 +13,7 @@ import form-parameters.resource.exec.Exec;
 public class DataWeaveAPIClient {
 
     private String _baseUrl;
-    public final Exec exec;
+    private final Exec exec;
 
     public DataWeaveAPIClient(String baseUrl) {
         _baseUrl = baseUrl;
@@ -38,6 +38,10 @@ public class DataWeaveAPIClient {
 
     public static DataWeaveAPIClient create() {
         return new DataWeaveAPIClient();
+    }
+
+    public Exec getExec() {
+        return this.exec;
     }
 
 }

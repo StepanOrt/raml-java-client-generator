@@ -8,7 +8,7 @@ public class Data {
 
     private String _baseUrl;
     private Client client;
-    public final Foo foo;
+    private final Foo foo;
 
     public Data(String baseUrl, Client client) {
         _baseUrl = (baseUrl +"/data");
@@ -22,6 +22,10 @@ public class Data {
 
     private String getBaseUri() {
         return _baseUrl;
+    }
+
+    public Foo getFoo() {
+        return this.foo;
     }
 
 }

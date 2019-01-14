@@ -60,16 +60,20 @@ public class RamlJavaClientGeneratorTest {
                 final File actualInnerFile = new File(actual, expectedInnerFile.getName());
                 Assert.assertTrue("File was not created " + actualInnerFile.getAbsolutePath(), actualInnerFile.exists());
                 if (expectedInnerFile.isDirectory() && actualInnerFile.isDirectory()) {
-                    compareDir(expectedInnerFile, actualInnerFile);
+                    compareDir(actualInnerFile, expectedInnerFile);
                 } else if (expectedInnerFile.isFile() && actualInnerFile.isFile()) {
                     final String expectedContent = FileUtils.readFileToString(expectedInnerFile);
                     final String actualContent = FileUtils.readFileToString(actualInnerFile);
                     BufferedReader expectedBuffer = new BufferedReader(new StringReader(expectedContent));
                     BufferedReader actualBuffer = new BufferedReader(new StringReader(actualContent));
                     int i = 0;
-                    String expectedLine = null;
+                    String expectedLine;
                     while ((expectedLine = expectedBuffer.readLine()) != null) {
-                        Assert.assertThat("Line " + i + " did not match " + actualInnerFile.getPath(), expectedLine, new IsEqualIgnoringWhiteSpace(actualBuffer.readLine()));
+                        String actualLine = actualBuffer.readLine();
+                        if (!new IsEqualIgnoringWhiteSpace(actualLine).matchesSafely(expectedLine)) {
+                            System.out.println(actualContent);
+                        }
+                        Assert.assertThat("Line " + i + " did not match " + actualInnerFile.getPath(), expectedLine, new IsEqualIgnoringWhiteSpace(actualLine));
                         i++;
                     }
                     //                    Assert.assertThat("Files " + expectedInnerFile.getPath() + " did not match " + actualInnerFile.getPath(), expectedContent, new IsEqualIgnoringWhiteSpace(actualContent));

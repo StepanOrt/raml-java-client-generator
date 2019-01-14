@@ -3,6 +3,7 @@ package global-type-return.resource.cs.login;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status.Family;
@@ -32,9 +33,20 @@ public class Login {
         Response response = invocationBuilder.post(null);
         if (response.getStatusInfo().getFamily()!= Family.SUCCESSFUL) {
             Response.StatusType statusInfo = response.getStatusInfo();
-            throw new FooException(statusInfo.getStatusCode(), statusInfo.getReasonPhrase());
+            FooException exception = new FooException(statusInfo.getStatusCode(), statusInfo.getReasonPhrase());
+            if (response.hasEntity()) {
+                exception.setMessageBody(response.readEntity(new GenericType<String>() {
+
+
+                                                             }
+                ));
+            }
+            response.close();
+            throw exception;
         }
-        return response.readEntity(global-type-return.model.User.class);
+        global-type-return.model.User entity = response.readEntity(global-type-return.model.User.class);
+        response.close();
+        return entity;
     }
 
 }

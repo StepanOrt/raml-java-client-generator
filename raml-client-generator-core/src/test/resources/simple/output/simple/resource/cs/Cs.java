@@ -10,8 +10,8 @@ public class Cs {
 
     private String _baseUrl;
     private Client client;
-    public final Data data;
-    public final Login login;
+    private final Data data;
+    private final Login login;
 
     public Cs(String baseUrl, Client client) {
         _baseUrl = (baseUrl +"/cs");
@@ -28,7 +28,15 @@ public class Cs {
         return _baseUrl;
     }
 
-    public final Id id(String id) {
+    public Data getData() {
+        return this.data;
+    }
+
+    public Login getLogin() {
+        return this.login;
+    }
+
+    public Id id(String id) {
         return new Id(getBaseUri(), getClient(), id);
     }
 
